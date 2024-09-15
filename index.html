@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAssembly Minesweeper</title>
+    <style>
+        body, html { margin: 0; padding: 0; overflow: hidden; }
+        #gameCanvas { display: block; margin: auto; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
+    <script>
+        const cellSize = 20;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.addEventListener('click', (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((event.clientX - rect.left) / cellSize);
+            const y = Math.floor((event.clientY - rect.top) / cellSize);
+            Module.revealCell(x, y);
+            checkGameState();
+        });
+
+        canvas.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((event.clientX - rect.left) / cellSize);
+            const y = Math.floor((event.clientY - rect.top) / cellSize);
+            Module.flagCell(x, y);
+        });
+
+        function checkGameState() {
+            if (Module.isGameOver()) {
+                alert('Game Over!');
+            } else if (Module.isGameWon()) {
+                alert('You Win!');
+            }
+        }
+
+        // Load the WebAssembly module
+        var script = document.createElement('script');
+        script.src = "./build/output.js";
+        script.onload = function() {
+            Module().then(function(module) {
+                Module = module;
+                Module.initGame(ctx);
+            });
+        };
+        document.body.appendChild(script);
+    </script>
+</body>
+</html>

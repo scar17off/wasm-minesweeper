@@ -1,0 +1,2 @@
+@echo off
+emcc src/main.cpp src/minesweeper.cpp -o build/output.js -s WASM=1 -s EXPORTED_RUNTIME_METHODS=['ccall','cwrap'] -s EXPORTED_FUNCTIONS=['_main'] -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=1 -s MODULARIZE=1 -s EXPORT_NAME="Module" --bind -std=c++17 -O3
